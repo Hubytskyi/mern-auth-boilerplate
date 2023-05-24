@@ -10,11 +10,15 @@ import Menu from "@mui/material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
+import { useLogoutMutation } from "../../../store/slices/usersApiSlice";
+import { logout } from "../../../store/slices/authSlice";
 
 function Nav() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { userInfo } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [logoutApiCall] = useLogoutMutation();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,6 +27,16 @@ function Nav() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate('/')
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -61,7 +75,7 @@ function Nav() {
                 <MenuItem onClick={handleClose}>
                   <Link to="/profile">Profile</Link>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
           ) : (

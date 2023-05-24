@@ -6,11 +6,10 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import FormContainer from "../../components/FormContainer/FormContainer";
-import { useRegisterMutation } from "../../store/slices/usersApiSlice";
+import { useUpdateMutation } from "../../store/slices/usersApiSlice";
 import { setCredentials } from "../../store/slices/authSlice";
 
 const styles = {
@@ -20,24 +19,22 @@ const styles = {
   },
 };
 
-function Register() {
+function Profile() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [register, { isLoading }] = useRegisterMutation();
+  const [update, { isLoading }] = useUpdateMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
+    setName(userInfo.name);
+    setEmail(userInfo.email);
+  }, [userInfo.name, userInfo.email]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,9 +45,9 @@ function Register() {
     }
 
     try {
-      const res = await register({ name, email, password }).unwrap();
+      const res = await update({ _id: userInfo._id, name, email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate("/");
+      toast.success("Successfully updated");
     } catch (err) {
       console.log(err);
       toast.error(err?.data || err.error || err.message || err);
@@ -60,7 +57,7 @@ function Register() {
   return (
     <FormContainer onSubmit>
       <Typography variant="h1" sx={styles.formItem}>
-        Sign Up
+        Update Profile
       </Typography>
       <FormControl sx={styles.form} fullWidth={true}>
         <TextField
@@ -111,19 +108,11 @@ function Register() {
           disabled={isLoading}
           endIcon={isLoading && <CircularProgress size={20} />}
         >
-          Sign Up
+          Update
         </Button>
-        <Typography variant="caption" sx={styles.formItem}>
-          Already have an account?
-          <Link to="/login">
-            <Button variant="text" size="small">
-              Sign In
-            </Button>
-          </Link>
-        </Typography>
       </FormControl>
     </FormContainer>
   );
 }
 
-export default Register;
+export default Profile;

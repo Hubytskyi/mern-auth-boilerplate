@@ -10,10 +10,12 @@ import { ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import store from "./store";
 import App from "./App.jsx";
+import PrivateRoute from "./routes/PrivateRoute";
 import Home from "./pages/Home/Home.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Register/Register.jsx";
 import theme from "./assets/styles/mui/theme";
+import Proflie from "./pages/Profile/Proflie";
 import "./index.css";
 
 const router = createBrowserRouter(
@@ -22,6 +24,11 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      
+      {/* Private Route */}
+      <Route path="" element={<PrivateRoute />}>
+        <Route path="/profile" element={<Proflie />} />
+      </Route>
     </Route>
   )
 );
