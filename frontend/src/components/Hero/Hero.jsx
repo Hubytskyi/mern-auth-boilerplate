@@ -1,5 +1,6 @@
 import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const styles = {
   root: {
@@ -19,10 +20,12 @@ const styles = {
     display: "flex",
     gap: "10px",
     marginTop: "20px",
-  }
+  },
 };
 
 function Hero() {
+  const { userInfo } = useSelector((state) => state.auth);
+
   return (
     <Box sx={styles.root}>
       <Typography variant="h1" gutterBottom>
@@ -32,10 +35,16 @@ function Hero() {
         This is a boilerplate for MERN authentication that stores a JWT in an
         HTTP-Only cookie. It also uses Redux Toolkit and Material UI.
       </Typography>
-      <Box sx={styles.btnWrapper}>
-        <Button variant="contained"><Link to="/login">Sign In</Link></Button>
-        <Button variant="outlined"><Link to="/register">Sign Up</Link></Button>
-      </Box>
+      {!userInfo && (
+        <Box sx={styles.btnWrapper}>
+          <Button variant="contained">
+            <Link to="/login">Sign In</Link>
+          </Button>
+          <Button variant="outlined">
+            <Link to="/register">Sign Up</Link>
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 }
